@@ -7,8 +7,8 @@ require('dotenv').config();
 
 // Set up MongoDB connection
 mongoose.connect(mongoURL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
+    serverSelectionTimeoutMS: 5000,
+    socketTimeoutMS: 45000
 })
 
 // Get the default connection
