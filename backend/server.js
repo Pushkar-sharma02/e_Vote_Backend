@@ -7,17 +7,20 @@ require('dotenv').config();
 const PORT = process.env.PORT || 5000;
 
 const db = require('./db');
-
 const userRoutes = require('./routes/userRoutes');
 const candidateRoutes = require('./routes/candidateRoutes');
 
 app.use(cors({
-  origin: 'https://e-votegov.netlify.app/',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true
+  origin: 'https://e-votegov.netlify.app', 
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], // Explicitly list all methods
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization'] // Explicitly allow necessary headers
 }));
 
 app.use(bodyParser.json());
+
+
+app.options('*', cors());
 
 app.use('/users', userRoutes);
 app.use('/candidates', candidateRoutes);
