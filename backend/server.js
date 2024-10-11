@@ -1,38 +1,43 @@
-// server.js
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const cors = require('cors'); // Import the cors middleware
+const cors = require('cors');
 require('dotenv').config();
 
 const PORT = process.env.PORT || 5000;
 
-const db = require('./db'); // Ensure this is correct and connects to your MongoDB
+const db = require('./db');
 
-// Import the router files
 const userRoutes = require('./routes/userRoutes');
 const candidateRoutes = require('./routes/candidateRoutes');
 
-// Use the CORS middleware with specific origin
 app.use(cors({
-  origin: 'http://localhost:3000', // Allow requests from this origin
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Allowed methods
-  credentials: true // Allow cookies to be sent with requests
+  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true
 }));
 
-// Use the body-parser middleware
-app.use(bodyParser.json()); // For parsing application/json
+app.use(bodyParser.json());
 
-
-// Use the routers
 app.use('/users', userRoutes);
 app.use('/candidates', candidateRoutes);
 
-// Default route
 app.get('/', (req, res) => {
     res.send('Welcome to the Voting App API');
 });
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
+
 app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);
+});
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (reason, promise) => {
+  console.log('Unhandled Rejection at:', promise, 'reason:', reason);
+  // Application specific logging, throwing an error, or other logic here
 });
